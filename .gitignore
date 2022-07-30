@@ -3,3 +3,5 @@ main
 
 # Ignoring local config file
 **.yaml
+
+**.pem
