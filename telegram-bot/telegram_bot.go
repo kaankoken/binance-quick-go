@@ -10,6 +10,7 @@ import (
 
 var (
 	keys *model.TelegramKeyModel
+	Bot  *tgbotapi.BotAPI
 )
 
 func init() {
@@ -20,7 +21,7 @@ func TestKeys() {
 	log.Println(keys)
 }
 
-func TelegramBot() *tgbotapi.BotAPI {
+func TelegramBot() {
 	bot, err := tgbotapi.NewBotAPI(keys.Token)
 
 	helper.CheckError(err)
@@ -59,15 +60,14 @@ func TelegramBot() *tgbotapi.BotAPI {
 			text = "I don't know that command"
 		}
 
-		SendNewMessage(bot, text)
+		SendNewMessage(text)
 	}
 
-	return bot
 }
 
-func SendNewMessage(bot *tgbotapi.BotAPI, message string) {
-	newMessage := tgbotapi.NewMessage(keys.ChannelId, "")
+func SendNewMessage(message string) {
+	newMessage := tgbotapi.NewMessage(keys.ChannelId, message)
 
-	_, err := bot.Send(newMessage)
+	_, err := Bot.Send(newMessage)
 	helper.CheckError(err)
 }
