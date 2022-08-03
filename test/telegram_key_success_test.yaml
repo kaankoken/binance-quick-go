@@ -1,0 +1,5 @@
+name: Telegram Fake Api Key
+kind: local-test
+key:
+  token: hjaskdlajshdklasdh
+  channelId: 123671823
