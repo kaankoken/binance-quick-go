@@ -25,8 +25,8 @@ func CheckError(err error) {
 	}
 }
 
-func ReadTelegramKeys() map[string]interface{} {
-	setupViper("telegram_key", "yaml")
+func ReadTelegramKeys(fileName string, extension string) map[string]interface{} {
+	setupViper(fileName, extension)
 
 	return viper.GetStringMap("key")
 }
