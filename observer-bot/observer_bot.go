@@ -11,23 +11,23 @@ import (
 	"github.com/adshao/go-binance/v2/futures"
 	"github.com/kaankoken/binance-quick-go/helper"
 	"github.com/kaankoken/binance-quick-go/observer-bot/models"
+	"github.com/oklog/ulid/v2"
 )
 
 var (
-	keys *models.ApiKeyModel
+	keys    *models.ApiKeyModel
+	symbols []models.SymbolModel
 )
 
 const (
-	fileName  string = "api_key"
-	extension string = "yaml"
+	fileName   string = "api_key"
+	extension  string = "yaml"
+	quoteAsset string = "USDT"
 )
 
 func init() {
 	keys = models.ToModel(helper.ReadApiKey(fileName, extension))
-}
-
-func TestKeys() {
-	log.Println(keys)
+	symbols = []models.SymbolModel{}
 }
 
 func getKlines(ctx context.Context, client *futures.Client, wg *sync.WaitGroup, ch chan<- []string, symbol string, interval string) {
@@ -80,16 +80,20 @@ func GetLatestResult() {
 	// TODO: get saved latest from DB
 }
 
-func GetSymbols() []string {
+func GetSymbols() {
 	//TODO: check if data exist in DB use it else get it
-	client := binance.NewClient(keys.Api, keys.Secret)
+	client := binance.NewFuturesClient(keys.Api, keys.Secret)
 
-	symbols, err := client.NewExchangeInfoService().Do(context.Background())
+	_symbols, err := client.NewExchangeInfoService().Do(context.Background())
 	helper.CheckError(err)
 
-	log.Println(symbols)
+	for _, symbol := range _symbols.Symbols {
+		if symbol.QuoteAsset == quoteAsset {
+			symbols = append(symbols, models.SymbolModel{Id: ulid.Make(), Symbol: symbol.Symbol})
+		}
+	}
 
-	return []string{"sadahjsdkj"}
+	log.Println(symbols)
 }
 
 func SaveLatestResult() {
