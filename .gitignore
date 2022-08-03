@@ -1,0 +1,7 @@
+# Ignoring local build file
+main
+
+# Ignoring local config file
+telegram_key.yaml
+
+**.pem
