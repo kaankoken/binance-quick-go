@@ -37,6 +37,15 @@ func Run() {
 
 	updates := bot.GetUpdatesChan(updateConfig)
 
+	botInitializationMessage := `
+		Current bot commands
+			/help
+			/sayhi
+			/status
+			/latest
+	`
+	SendNewMessage(botInitializationMessage)
+
 	for update := range updates {
 		// ignore any non-Message updates
 		if update.Message == nil {
