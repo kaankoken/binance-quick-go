@@ -3,3 +3,4 @@ main
 
 # Ignoring local config file
 api_key.yaml
+telegram_key.yaml
