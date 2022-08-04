@@ -3,43 +3,51 @@ package observerbot
 import (
 	"context"
 	"fmt"
-
 	"log"
+	"time"
+
 	"sync"
 
 	"github.com/adshao/go-binance/v2"
 	"github.com/adshao/go-binance/v2/futures"
 	"github.com/kaankoken/binance-quick-go/helper"
 	"github.com/kaankoken/binance-quick-go/observer-bot/models"
-	"github.com/oklog/ulid/v2"
 )
 
 var (
-	keys    *models.ApiKeyModel
-	symbols []models.SymbolModel
+	keys      *models.ApiKeyModel
+	symbols   *[]models.SymbolModel
+	intervals []string
 )
 
 const (
 	fileName   string = "api_key"
 	extension  string = "yaml"
 	quoteAsset string = "USDT"
+	maxLimit   uint16 = 300
+	ma200      uint16 = 200
+	ma100      uint16 = 100
+	ma50       uint16 = 50
+	ma20       uint16 = 20
 )
 
 func init() {
-	keys = models.ToModel(helper.ReadApiKey(fileName, extension))
-	symbols = []models.SymbolModel{}
+	keys = models.ToApiModel(helper.ReadApiKey(fileName, extension))
+	symbols = &[]models.SymbolModel{}
+	intervals = []string{"1h", "4h"}
 }
 
-func getKlines(ctx context.Context, client *futures.Client, wg *sync.WaitGroup, ch chan<- []string, symbol string, interval string) {
-	result, err := client.NewKlinesService().Symbol(symbol).
-		Interval(interval).Do(ctx)
+func getKlines(ctx context.Context, client *futures.Client, wg *sync.WaitGroup, arg models.KlineArguments) {
+	result, err := client.NewKlinesService().Symbol(arg.Symbol).
+		Interval(arg.Interval).Limit(arg.Limit).Do(ctx)
 
-	fmt.Println(result)
 	helper.CheckError(err)
+
+	key := arg.Symbol + "-" + arg.Interval
 
 	// TODO: pass result to channel
 	// TODO create basic model for channel
-	ch <- []string{"result"}
+	arg.Ch <- models.KlineMainModel{Key: key, Data: models.ToKlineModel(result)}
 	defer wg.Done()
 }
 
@@ -51,28 +59,38 @@ func calculateMovingAverage() {
 
 }
 
-func Run(symbols []string, intervals [2]string) {
+func Run() {
+	GetSymbols()
 	ctx := context.Background()
 	futuresClient := binance.NewFuturesClient(keys.Api, keys.Secret)
 
-	channel := make(chan []string)
+	channel := make(chan models.KlineMainModel)
 
 	var wg sync.WaitGroup
 
-	for _, v := range symbols {
-		for _, i := range intervals {
-			wg.Add(1)
-			go getKlines(ctx, futuresClient, &wg, channel, v, i)
-		}
+	for _, v := range *symbols {
+		wg.Add(1)
+		go getKlines(ctx, futuresClient, &wg, models.KlineArguments{Ch: channel, Symbol: v.Symbol, Interval: intervals[0], Limit: int(maxLimit)})
+	}
+
+	for _, v := range *symbols {
+		wg.Add(1)
+		go getKlines(ctx, futuresClient, &wg, models.KlineArguments{Ch: channel, Symbol: v.Symbol, Interval: intervals[1], Limit: int(ma200)})
 	}
 
 	go func() {
 		wg.Wait()
 		close(channel)
 	}()
+	i := 0
+	for value := range channel {
+		if i == 2 {
+			break
+		}
 
-	for kline := range channel {
-		log.Println(kline)
+		log.Println(value.Key, (*value.Data)[0].CloseTime, time.UnixMilli((*value.Data)[0].CloseTime))
+		i++
+		fmt.Println("-----------------------------------")
 	}
 }
 
@@ -81,19 +99,23 @@ func GetLatestResult() {
 }
 
 func GetSymbols() {
-	//TODO: check if data exist in DB use it else get it
+	/*
+		TODO: if data exist in db
+		call dto model to model
+		symbols = models.ToSymbolModel()
+		return
+	*/
+
+	// TODO: if does not exist
 	client := binance.NewFuturesClient(keys.Api, keys.Secret)
 
 	_symbols, err := client.NewExchangeInfoService().Do(context.Background())
 	helper.CheckError(err)
 
-	for _, symbol := range _symbols.Symbols {
-		if symbol.QuoteAsset == quoteAsset {
-			symbols = append(symbols, models.SymbolModel{Id: ulid.Make(), Symbol: symbol.Symbol})
-		}
-	}
+	filteredSymbols := models.FilterSymbols(_symbols, quoteAsset)
+	symbols = models.ToSymbolModel(filteredSymbols)
 
-	log.Println(symbols)
+	// TODO: Save to sql from sql module
 }
 
 func SaveLatestResult() {
