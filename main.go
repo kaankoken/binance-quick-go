@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	observerbot "github.com/kaankoken/binance-quick-go/observer-bot"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/robfig/cron/v3"
@@ -31,7 +32,8 @@ func main() {
 		))
 
 		c.AddFunc("0 */1 * * *", func() {
-			log.Info("Running every hour")
+			log.Info("Running calculation")
+			observerbot.Run()
 		})
 
 		log.Info("Start cron")
