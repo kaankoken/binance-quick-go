@@ -11,7 +11,6 @@ import (
 	"github.com/adshao/go-binance/v2/futures"
 	"github.com/kaankoken/binance-quick-go/helper"
 	"github.com/kaankoken/binance-quick-go/observer-bot/models"
-	telegrambot "github.com/kaankoken/binance-quick-go/telegram-bot"
 )
 
 var (
@@ -98,6 +97,9 @@ func GetLatestResult() {
 }
 
 func GetSymbols() {
+	if symbols != nil && len(*symbols) > 0 {
+		return
+	}
 	/*
 		TODO: if data exist in db
 		call dto model to model
@@ -113,9 +115,6 @@ func GetSymbols() {
 
 	filteredSymbols := models.FilterSymbols(_symbols, quoteAsset)
 	symbols = models.ToSymbolModel(filteredSymbols)
-
-	log.Println(len(*symbols))
-	telegrambot.SendNewMessage("Test message: " + (*symbols)[0].Symbol)
 	// TODO: Save to sql from sql module
 }
 
