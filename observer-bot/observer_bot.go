@@ -2,7 +2,6 @@ package observerbot
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -82,15 +81,14 @@ func Run() {
 		wg.Wait()
 		close(channel)
 	}()
-	i := 0
-	for value := range channel {
-		if i == 2 {
-			break
-		}
 
-		log.Println(value.Key, (*value.Data)[0].CloseTime, time.UnixMilli((*value.Data)[0].CloseTime))
-		i++
-		fmt.Println("-----------------------------------")
+	currentTime := time.Now().UnixMilli()
+	// Removing last element if last candle stick is not closed
+	for value := range channel {
+		if len(*value.Data) > 0 && currentTime-(*value.Data)[len(*value.Data)-1].CloseTime < 0 {
+			*value.Data = (*value.Data)[:len(*value.Data)-1]
+		}
+		log.Println(value.Key, time.UnixMilli((*value.Data)[0].CloseTime), time.UnixMilli((*value.Data)[len(*value.Data)-1].CloseTime))
 	}
 }
 
@@ -115,6 +113,7 @@ func GetSymbols() {
 	filteredSymbols := models.FilterSymbols(_symbols, quoteAsset)
 	symbols = models.ToSymbolModel(filteredSymbols)
 
+	log.Println(len(*symbols))
 	// TODO: Save to sql from sql module
 }
 
