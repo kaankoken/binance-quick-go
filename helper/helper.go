@@ -30,3 +30,9 @@ func ReadApiKey(fileName string, extension string) map[string]interface{} {
 
 	return viper.GetStringMap("key")
 }
+
+func ReadTelegramKeys(fileName string, extension string) map[string]interface{} {
+	setupViper(fileName, extension)
+
+	return viper.GetStringMap("key")
+}

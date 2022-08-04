@@ -11,6 +11,7 @@ import (
 	"github.com/adshao/go-binance/v2/futures"
 	"github.com/kaankoken/binance-quick-go/helper"
 	"github.com/kaankoken/binance-quick-go/observer-bot/models"
+	telegrambot "github.com/kaankoken/binance-quick-go/telegram-bot"
 )
 
 var (
@@ -114,6 +115,7 @@ func GetSymbols() {
 	symbols = models.ToSymbolModel(filteredSymbols)
 
 	log.Println(len(*symbols))
+	telegrambot.SendNewMessage("Test message: " + (*symbols)[0].Symbol)
 	// TODO: Save to sql from sql module
 }
 
