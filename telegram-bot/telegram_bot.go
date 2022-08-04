@@ -39,10 +39,10 @@ func Run() {
 
 	botInitializationMessage := `
 		Current bot commands
-			/help
-			/sayhi
-			/status
-			/latest
+		/help
+		/sayhi
+		/status
+		/latest
 	`
 	SendNewMessage(botInitializationMessage)
 
@@ -60,7 +60,7 @@ func Run() {
 		var text string
 		switch update.Message.Command() {
 		case "help":
-			text = "I understand /sayhi and /status."
+			text = botInitializationMessage
 		case "sayhi":
 			text = "Hi :)"
 		case "status":
