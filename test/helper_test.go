@@ -7,12 +7,13 @@ import (
 )
 
 const (
-	fileName  string = "telegram_key_success_test"
-	extension string = "yaml"
+	fileSuccessName string = "telegram_key_success_test"
+	fileErrorName   string = "telegram_key_success_test"
+	extension       string = "yaml"
 )
 
 func TestReadTelegramKeysSuccess(t *testing.T) {
-	expected := helper.ReadTelegramKeys(fileName, extension)
+	expected := helper.ReadTelegramKeys(fileSuccessName, extension)
 
 	if expected["token"] == nil || expected["channelid"] == nil {
 		t.Fatal("Could not parse the YAML file")
@@ -20,7 +21,7 @@ func TestReadTelegramKeysSuccess(t *testing.T) {
 }
 
 func TestReadTelegramKeysError(t *testing.T) {
-	expected := helper.ReadTelegramKeys("telegram_key_error_test", "yaml")
+	expected := helper.ReadTelegramKeys(fileErrorName, extension)
 
 	if expected["token"] != nil || expected["channelid"] != nil {
 		t.Fatal("Could parse the YAML file")
