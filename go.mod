@@ -7,27 +7,37 @@ require (
 	github.com/spf13/viper v1.12.0
 )
 
-require github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
+require (
+	github.com/evsamsonov/trading-indicators v0.6.1
+	github.com/evsamsonov/trading-timeseries v0.2.0
+	github.com/gin-gonic/gin v1.8.1
+	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
+	github.com/robfig/cron/v3 v3.0.0
+	github.com/sirupsen/logrus v1.9.0
+)
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.8.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.11.0 // indirect
 	github.com/goccy/go-json v0.9.10 // indirect
-	github.com/kr/pretty v0.3.0 // indirect
-	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
-	github.com/robfig/cron/v3 v3.0.0 // indirect
-	github.com/rogpeppe/go-internal v1.8.0 // indirect
-	github.com/sirupsen/logrus v1.9.0 // indirect
+	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/richardlehane/mscfb v1.0.4 // indirect
+	github.com/richardlehane/msoleps v1.0.1 // indirect
+	github.com/stretchr/objx v0.1.0 // indirect
+	github.com/stretchr/testify v1.7.2 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
+	github.com/xuri/efp v0.0.0-20220407160117-ad0f7a785be8 // indirect
+	github.com/xuri/excelize/v2 v2.6.0 // indirect
+	github.com/xuri/nfp v0.0.0-20220409054826-5e722a1d9e22 // indirect
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
 	golang.org/x/net v0.0.0-20220802222814-0bcc04d9c69b // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
-	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
 
 require (
@@ -54,3 +64,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/evsamsonov/trading-indicator v0.6.1 => github.com/kaankoken/trading-indicators v0.6.2
+
+replace github.com/evsamsonov/trading-timeseries v0.2.0 => github.com/kaankoken/trading-timeseries v0.2.1
