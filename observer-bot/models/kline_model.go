@@ -12,19 +12,20 @@ type KlineMainModel struct {
 }
 
 type KlineModel struct {
-	Open      string
-	Close     string
-	High      string
-	Low       string
-	Volume    string
+	Open      float64 `json:",string"`
+	Close     float64 `json:",string"`
+	High      float64 `json:",string"`
+	Low       float64 `json:",string"`
+	Volume    float64 `json:",string"`
 	CloseTime int64
 }
 
 type KlineArguments struct {
-	Symbol   string
-	Interval string
-	Ch       chan<- KlineMainModel
-	Limit    int
+	Symbol           string
+	Interval         string
+	Ch               chan<- KlineMainModel
+	Limit            int
+	Key_Write_Option bool
 }
 
 func ToKlineModel(data interface{}) *[]KlineModel {
