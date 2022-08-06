@@ -32,8 +32,13 @@ func main() {
 		))
 
 		c.AddFunc("0 */1 * * *", func() {
-			log.Info("Running calculation")
+			log.Info("Running Hourly EMA Calculation")
 			observerbot.Run()
+		})
+
+		c.AddFunc("1 0 */1 * *", func() {
+			log.Info("Running Daily Volume Calculation")
+			observerbot.CalculateFiftyDaysOfAverageVolume()
 		})
 
 		log.Info("Start cron")
