@@ -2,8 +2,10 @@ package telegrambot
 
 import (
 	"log"
+	"os"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	gcloudbucket "github.com/kaankoken/binance-quick-go/gcloud-bucket"
 	"github.com/kaankoken/binance-quick-go/helper"
 	"github.com/kaankoken/binance-quick-go/telegram-bot/models"
 )
@@ -19,7 +21,7 @@ const (
 )
 
 func init() {
-	keys = models.ToTelegramModel(helper.ReadTelegramKeys(fileName, extension))
+	keys = models.ToTelegramModel(helper.ReadApiKey(fileName, extension))
 }
 
 func Run() {
@@ -37,4 +39,11 @@ func SendNewMessage(message string) {
 	newMessage := tgbotapi.NewMessage(keys.ChannelId, message)
 	_, err := Bot.Send(newMessage)
 	helper.CheckError(err)
+}
+
+func SendFile(path string) {
+	file, err := os.OpenFile(path, os.O_RDWR, 0644)
+
+	helper.CheckError(err)
+	gcloudbucket.Uploader.UploadFile(*file, file.Name())
 }

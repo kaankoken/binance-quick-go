@@ -31,8 +31,14 @@ func ReadApiKey(fileName string, extension string) map[string]interface{} {
 	return viper.GetStringMap("key")
 }
 
-func ReadTelegramKeys(fileName string, extension string) map[string]interface{} {
+func ReadGCloudConfig(fileName string, extension string) map[string]string {
 	setupViper(fileName, extension)
 
-	return viper.GetStringMap("key")
+	return viper.GetStringMapString("bucket")
+}
+
+func ReadGCloudConfigJson(fileName string, extension string) map[string]string {
+	setupViper(fileName, extension)
+
+	return viper.GetStringMapString("installed")
 }

@@ -1,13 +1,11 @@
 package main
 
 import (
-	"net/http"
+	"path/filepath"
 
-	"github.com/gin-gonic/gin"
-	observerbot "github.com/kaankoken/binance-quick-go/observer-bot"
+	"github.com/kaankoken/binance-quick-go/helper"
+	telegrambot "github.com/kaankoken/binance-quick-go/telegram-bot"
 	log "github.com/sirupsen/logrus"
-
-	"github.com/robfig/cron/v3"
 )
 
 func init() {
@@ -16,34 +14,39 @@ func init() {
 }
 
 func main() {
-	log.Info("Create new cron")
+	//log.Info("Create new cron")
 
-	r := gin.Default()
+	//r := gin.Default()
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
+	//r.GET("/ping", func(c *gin.Context) {
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"message": "pong",
+	//	})
+	//})
 
-	go func() {
-		c := cron.New(cron.WithChain(
-			cron.Recover(cron.DefaultLogger),
-		))
+	//go func() {
+	//	c := cron.New(cron.WithChain(
+	//		cron.Recover(cron.DefaultLogger),
+	//	))
+	//
+	//	c.AddFunc("0 */1 * * *", func() {
+	//		log.Info("Running Hourly EMA Calculation")
+	//		observerbot.Run()
+	//	})
+	//
+	//	c.AddFunc("1 0 */1 * *", func() {
+	//		log.Info("Running Daily Volume Calculation")
+	//		observerbot.CalculateFiftyDaysOfAverageVolume()
+	//	})
+	//
+	//	log.Info("Start cron")
+	//	c.Start()
+	//}()
 
-		c.AddFunc("0 */1 * * *", func() {
-			log.Info("Running Hourly EMA Calculation")
-			observerbot.Run()
-		})
+	//r.Run()
+	telegrambot.Run()
 
-		c.AddFunc("1 0 */1 * *", func() {
-			log.Info("Running Daily Volume Calculation")
-			observerbot.CalculateFiftyDaysOfAverageVolume()
-		})
-
-		log.Info("Start cron")
-		c.Start()
-	}()
-
-	r.Run()
+	file, err := filepath.Abs("./logo-dark.png")
+	helper.CheckError(err)
+	telegrambot.SendFile(file)
 }
